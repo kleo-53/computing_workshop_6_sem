@@ -47,6 +47,13 @@ func check(A, L mat.Dense) (ok bool, res *mat.Dense) {
 	return mat.EqualApprox(&A, res, 1e-12), res
 }
 
+// решение системы методом Холецкого
+func sqrtSolve(L, B mat.Dense) (x mat.Dense) {
+	y := matSolve(&L, &B)
+	x = matSolve(L.T(), &y)
+	return x
+}
+
 // ____________________________________________________
 // вычисление спектрального критерия по матрице
 func spectralCriterion(A mat.Dense) (res float64) {
@@ -102,4 +109,14 @@ func TDense(A mat.Dense) (res *mat.Dense) {
 		}
 	}
 	return re
+}
+
+// нахождение решения СЛАУ вида Ax=b, возвращает вектор X
+func matSolve(A mat.Matrix, b mat.Matrix) (X mat.Dense) {
+	err := X.Solve(A, b)
+	if err != nil {
+		fmt.Printf("Ошибка при решении СЛАУ: %v", err)
+		return
+	}
+	return X
 }

@@ -26,6 +26,7 @@ func printTable(A, L, LT mat.Dense) {
 
 func main() {
 	A := mat.NewDense(4, 4, []float64{5, 2, 3, 4, 2, 4, 2, 2, 3, 2, 8, 2, 4, 2, 2, 9})
+	B := mat.NewDense(4, 1, []float64{4, 2, 0, 5})
 	L := calculateL(A)
 	fmt.Println("Матрица L:")
 	matPrint(L)
@@ -41,7 +42,17 @@ func main() {
 	if ok {
 		fmt.Println("A = L*L^T!")
 	} else {
-		fmt.Println(":(")
+		fmt.Println("A != L*L^T :(")
 	}
 	printTable(*A, *L, *TDense(*L))
+	fmt.Println("Решение системы с помощью библиотеки:")
+	x, xH, eps := matSolve(A, B), sqrtSolve(*L, *B), 1e-12
+	matPrint(&x)
+	fmt.Println("\nРешение системы c помощью разложения Холецкого")
+	matPrint(&xH)
+	if mat.EqualApprox(&x, &xH, eps) {
+		fmt.Printf("\nОтветы совпадают с точностью %s", fmt.Sprint(eps))
+	} else {
+		fmt.Println("Ответы не совпадают")
+	}
 }
